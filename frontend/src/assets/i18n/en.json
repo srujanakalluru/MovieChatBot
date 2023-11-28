@@ -1,0 +1,67 @@
+{
+  "app": {
+    "title": "Movie Chatbot"
+  },
+  "header": {
+    "syncTitle": "Sync database from TMDB",
+    "lightMode": "Switch to light mode",
+    "darkMode": "Switch to dark mode",
+    "language": "Language"
+  },
+  "sync": {
+    "title": "Sync Database from TMDB",
+    "subtitle": "Pulls all languages, genres, and movies from the last sync date to yesterday. Also runs automatically every day at 3:30 AM.",
+    "lastSynced": "Last synced",
+    "at": "at",
+    "neverSynced": "Never synced",
+    "advanced": "Advanced settings",
+    "manualSubtitle": "Manually sync a specific date range (bypasses auto-sync logic).",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "syncing": "Syncing...",
+    "syncRange": "Sync range",
+    "doneThrough": "Done! Synced through {{date}}.",
+    "failed": "Sync failed: {{error}}",
+    "rangeDone": "Done! Range synced successfully.",
+    "rangeFailed": "Failed: {{error}}",
+    "setBothDates": "Please set both dates.",
+    "dateTooLate": "Data is available only up to yesterday."
+  },
+  "common": {
+    "cancel": "Cancel",
+    "unknown": "unknown",
+    "unknownError": "Unknown error"
+  },
+  "search": {
+    "placeholder": "Ask anything about movies...",
+    "clear": "Clear",
+    "search": "Search",
+    "translitOn": "Telugu typing: on",
+    "translitOff": "Telugu typing: off"
+  },
+  "result": {
+    "found": "Found {{count}} result(s)",
+    "noResults": "No results found."
+  },
+  "error": {
+    "server": "Server error ({{status}}). Check backend logs.",
+    "noServer": "Could not reach the server. Is the backend running?"
+  },
+  "suggestions": [
+    "Top 5 Telugu movies by popularity",
+    "Most common genre in English films",
+    "Top 3 Italian movies in 2023",
+    "Compare Telugu vs Tamil ratings"
+  ],
+  "auth": {
+    "subtitle": "Sign in with Google to continue",
+    "logout": "Sign out",
+    "loginError": "Sign-in failed. Please try again.",
+    "scriptError": "Could not load Google Sign-In. Check your connection and reload.",
+    "adminToggle": "Admin sign-in",
+    "username": "Username",
+    "password": "Password",
+    "signIn": "Sign in",
+    "adminError": "Invalid username or password"
+  }
+}

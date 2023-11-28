@@ -1,0 +1,25 @@
+databaseChangeLog:
+
+
+  - changeSet:
+      id: 002-create-app-user
+      author: srujana
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: app_user
+      changes:
+        - sql:
+            sql: >
+              CREATE TABLE `repo`.`app_user` (
+                `id` BIGINT NOT NULL AUTO_INCREMENT,
+                `google_sub` VARCHAR(255) NOT NULL,
+                `email` VARCHAR(255) NOT NULL,
+                `name` VARCHAR(255),
+                `picture_url` VARCHAR(512),
+                `created_at` DATETIME(6) NOT NULL,
+                `last_login_at` DATETIME(6) NOT NULL,
+                PRIMARY KEY (`id`),
+                UNIQUE KEY `uk_app_user_google_sub` (`google_sub`)
+              ) ENGINE=InnoDB;

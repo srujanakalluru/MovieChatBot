@@ -1,0 +1,103 @@
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: movie-mysql
+    profiles: ["app"]
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: repo
+      MYSQL_USER: moviebot
+      MYSQL_PASSWORD: moviebot
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpass"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: movie-rabbitmq
+    profiles: ["app"]
+    environment:
+      RABBITMQ_DEFAULT_USER: moviebot
+      RABBITMQ_DEFAULT_PASS: moviebot
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  llm:
+    image: srujanakalluru/movie-sql-llm:latest
+    container_name: movie-llm
+    profiles: ["app"]
+    command: >
+      -m /models/movie-sql-q4_k_m.gguf
+      --host 0.0.0.0 --port 8080
+      -c 4096
+    ports:
+      - "11436:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    container_name: movie-backend
+    profiles: ["app"]
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      llm:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/repo
+      SPRING_DATASOURCE_USERNAME: moviebot
+      SPRING_DATASOURCE_PASSWORD: moviebot
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: moviebot
+      SPRING_RABBITMQ_PASSWORD: moviebot
+      LLM_ENDPOINT: http://llm:8080/v1/chat/completions
+      TMDB_API_KEY: ${TMDB_API_KEY:-}
+      TMDB_API_TOKEN: ${TMDB_API_TOKEN:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      JWT_SECRET: ${JWT_SECRET:-}
+      QUERY_DATASOURCE_USERNAME: ${QUERY_DB_USER:-moviebot}
+      QUERY_DATASOURCE_PASSWORD: ${QUERY_DB_PASSWORD:-moviebot}
+      JAVA_TOOL_OPTIONS: ${BACKEND_DEBUG:-}
+    ports:
+      - "8081:8080"
+      - "127.0.0.1:5005:5005"
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: movie-frontend
+    profiles: ["app"]
+    depends_on:
+      - backend
+    ports:
+      - "4201:80"
+    restart: unless-stopped
+
+volumes:
+  mysql-data:

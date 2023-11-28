@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-collation-utf8mb4-0900-ai-ci
+      author: srujana
+      comment: Set accent-insensitive and case-insensitive collation on text search columns so queries like 'Bahubali' match 'Bāhubali'
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: movie
+      changes:
+        - sql:
+            sql: >
+              ALTER TABLE `repo`.`movie`
+                MODIFY `title` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+                MODIFY `original_title` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+              ALTER TABLE `repo`.`genre`
+                MODIFY `name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+              ALTER TABLE `repo`.`language`
+                MODIFY `english_name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+                MODIFY `name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;

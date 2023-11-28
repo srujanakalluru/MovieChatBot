@@ -1,0 +1,101 @@
+databaseChangeLog:
+
+
+  - changeSet:
+      id: 000-create-genre
+      author: srujana
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: genre
+      changes:
+        - sql:
+            sql: >
+              CREATE TABLE `repo`.`genre` (
+                `id` INTEGER NOT NULL,
+                `name` VARCHAR(255),
+                PRIMARY KEY (`id`)
+              ) ENGINE=InnoDB;
+
+  - changeSet:
+      id: 000-create-language
+      author: srujana
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: language
+      changes:
+        - sql:
+            sql: >
+              CREATE TABLE `repo`.`language` (
+                `iso_639_1` VARCHAR(255) NOT NULL,
+                `english_name` VARCHAR(255),
+                `name` VARCHAR(255),
+                PRIMARY KEY (`iso_639_1`)
+              ) ENGINE=InnoDB;
+
+  - changeSet:
+      id: 000-create-movie
+      author: srujana
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: movie
+      changes:
+        - sql:
+            sql: >
+              CREATE TABLE `repo`.`movie` (
+                `id` BIGINT NOT NULL,
+                `adult` BIT NOT NULL,
+                `backdrop_path` VARCHAR(255),
+                `original_language` VARCHAR(255),
+                `original_title` VARCHAR(255),
+                `overview` MEDIUMTEXT,
+                `popularity` DOUBLE NOT NULL,
+                `poster_path` VARCHAR(255),
+                `release_date` DATE,
+                `title` VARCHAR(255),
+                `video` BIT NOT NULL,
+                `vote_average` DOUBLE NOT NULL,
+                `vote_count` INTEGER NOT NULL,
+                PRIMARY KEY (`id`)
+              ) ENGINE=InnoDB;
+
+  - changeSet:
+      id: 000-create-movie-genres
+      author: srujana
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: movie_genres
+      changes:
+        - sql:
+            sql: >
+              CREATE TABLE `repo`.`movie_genres` (
+                `movie_id` BIGINT NOT NULL,
+                `genre_ids` INTEGER,
+                CONSTRAINT `fk_movie_genres_movie`
+                  FOREIGN KEY (`movie_id`) REFERENCES `repo`.`movie` (`id`)
+              ) ENGINE=InnoDB;
+
+  - changeSet:
+      id: 000-create-sync-log
+      author: srujana
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: sync_log
+      changes:
+        - sql:
+            sql: >
+              CREATE TABLE `repo`.`sync_log` (
+                `id` BIGINT NOT NULL,
+                `last_sync_date` DATE,
+                `synced_at` DATETIME(6),
+                PRIMARY KEY (`id`)
+              ) ENGINE=InnoDB;

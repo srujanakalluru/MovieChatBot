@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- popcorn -->
+  <g fill="#fff7ed" stroke="#f59e0b" stroke-width="1.6" stroke-linejoin="round">
+    <circle cx="19" cy="15" r="5.2"/>
+    <circle cx="31" cy="9" r="5.8"/>
+    <circle cx="44" cy="14" r="5.2"/>
+    <circle cx="25" cy="19" r="4.6"/>
+    <circle cx="38" cy="19" r="4.6"/>
+  </g>
+  <!-- film reel -->
+  <circle cx="32" cy="42" r="19.5" fill="#1f2937"/>
+  <circle cx="32" cy="42" r="19.5" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+  <circle cx="32" cy="42" r="4.6" fill="#f59e0b"/>
+  <g fill="#f59e0b">
+    <circle cx="32" cy="30" r="3.3"/>
+    <circle cx="42.5" cy="37.5" r="3.3"/>
+    <circle cx="38.5" cy="50" r="3.3"/>
+    <circle cx="25.5" cy="50" r="3.3"/>
+    <circle cx="21.5" cy="37.5" r="3.3"/>
+  </g>
+</svg>

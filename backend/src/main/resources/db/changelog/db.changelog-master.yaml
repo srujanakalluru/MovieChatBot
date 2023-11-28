@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changes/000-create-tables.yaml
+  - include:
+      file: db/changelog/changes/001-collation-utf8mb4-0900-ai-ci.yaml
+  - include:
+      file: db/changelog/changes/002-create-app-user.yaml

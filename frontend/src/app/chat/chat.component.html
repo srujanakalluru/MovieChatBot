@@ -1,0 +1,232 @@
+<div class="shell">
+
+  <header>
+    <div class="logo">🎬</div>
+    <div class="header-text">
+      <h1>{{ 'app.title' | translate }}</h1>
+    </div>
+
+    <div class="lang-switch" role="group" [attr.aria-label]="'header.language' | translate">
+      @for (l of languages; track l.code) {
+        <button class="lang-btn" [class.active]="currentLang() === l.code" (click)="setLang(l.code)">{{ l.label }}</button>
+      }
+    </div>
+
+    @if (auth.isAdmin()) {
+      <button class="icon-btn" (click)="openBackfill()" [title]="'header.syncTitle' | translate">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="8 17 12 21 16 17"/>
+          <line x1="12" y1="12" x2="12" y2="21"/>
+          <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/>
+        </svg>
+      </button>
+    }
+    <button class="theme-toggle" (click)="toggleTheme()" [title]="isDark() ? ('header.lightMode' | translate) : ('header.darkMode' | translate)">
+      {{ isDark() ? '☀' : '🌙' }}
+    </button>
+    <button class="icon-btn" (click)="logout()"
+            [title]="('auth.logout' | translate) + (auth.user()?.email ? ' (' + auth.user()?.email + ')' : '')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+        <polyline points="16 17 21 12 16 7"/>
+        <line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+    </button>
+  </header>
+
+  @if (showBackfill()) {
+    <div class="modal-overlay" (click)="closeBackfill()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <h2>{{ 'sync.title' | translate }}</h2>
+        <p class="modal-sub">{{ 'sync.subtitle' | translate }}</p>
+
+        <div class="sync-info">
+          @if (syncStatus()?.lastSyncDate) {
+            <span class="sync-label">{{ 'sync.lastSynced' | translate }}</span>
+            <span class="sync-value">{{ syncStatus()!.lastSyncDate }}</span>
+            <span class="sync-time">{{ 'sync.at' | translate }} {{ syncStatus()!.syncedAt | date:'dd MMM yyyy, HH:mm' }}</span>
+          } @else {
+            <span class="sync-label">{{ 'sync.neverSynced' | translate }}</span>
+          }
+        </div>
+
+        @if (backfillStatus()) {
+          <div class="backfill-status" [class.done]="backfillDone()">
+            {{ backfillStatus() }}
+          </div>
+        }
+
+        <div class="advanced-toggle" (click)="showAdvanced.set(!showAdvanced())">
+          {{ showAdvanced() ? '▲' : '▼' }} {{ 'sync.advanced' | translate }}
+        </div>
+
+        @if (showAdvanced()) {
+          <div class="advanced-panel">
+            <p class="modal-sub">{{ 'sync.manualSubtitle' | translate }}</p>
+            <div class="date-row">
+              <div class="field">
+                <label>{{ 'sync.startDate' | translate }}</label>
+                <input type="date" [ngModel]="manualStart()" (ngModelChange)="manualStart.set($event)" [max]="maxSyncDate" [disabled]="manualRunning()" />
+              </div>
+              <div class="field">
+                <label>{{ 'sync.endDate' | translate }}</label>
+                <input type="date" [ngModel]="manualEnd()" (ngModelChange)="manualEnd.set($event)" [max]="maxSyncDate" [disabled]="manualRunning()" />
+              </div>
+            </div>
+            @if (manualStatus()) {
+              <div class="backfill-status" [class.done]="manualDone()">
+                {{ manualStatus() }}
+              </div>
+            }
+            <button class="btn-sync manual-sync-btn" (click)="runManualSync()" [disabled]="manualRunning()">
+              <svg class="sync-icon" [class.spinning]="manualRunning()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                <polyline points="3 3 3 8 8 8"/>
+                <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+                <polyline points="21 21 21 16 16 16"/>
+              </svg>
+              {{ manualRunning() ? ('sync.syncing' | translate) : ('sync.syncRange' | translate) }}
+            </button>
+          </div>
+        }
+
+        <div class="modal-actions">
+          <button class="btn-cancel" (click)="closeBackfill()" [disabled]="backfillRunning() || manualRunning()">{{ 'common.cancel' | translate }}</button>
+          <button class="btn-sync" (click)="runBackfill()" [disabled]="backfillRunning()" [title]="'header.syncTitle' | translate">
+            <svg class="sync-icon" [class.spinning]="backfillRunning()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <polyline points="3 3 3 8 8 8"/>
+              <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+              <polyline points="21 21 21 16 16 16"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="search-section">
+    <div class="search-row">
+      <textarea
+        #inputRef
+        [ngModel]="inputText()"
+        (ngModelChange)="inputText.set($event)"
+        (input)="onInput($event)"
+        (keydown)="onKeydown($event)"
+        [placeholder]="'search.placeholder' | translate"
+        rows="1"
+        [disabled]="loading()"
+      ></textarea>
+      <button class="clear-btn" (click)="inputText.set(''); currentResult.set(null)" [disabled]="loading() || !inputText()" [title]="'search.clear' | translate">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <button class="send-btn" (click)="send()" [disabled]="loading() || !inputText().trim()" [title]="'search.search' | translate">&#9658;</button>
+    </div>
+
+    <div class="suggestions">
+      @for (s of suggestions(); track s) {
+        <button class="chip" (click)="send(s)" [disabled]="loading()">{{ s }}</button>
+      }
+    </div>
+
+    @if (currentLang() === 'te') {
+      <div class="translit-row">
+        <button type="button" class="translit-toggle" [class.active]="translitEnabled()"
+                (click)="translitEnabled.set(!translitEnabled())">
+          అ ⇄ A {{ (translitEnabled() ? 'search.translitOn' : 'search.translitOff') | translate }}
+        </button>
+      </div>
+    }
+  </div>
+
+  <div class="result-area">
+
+    @if (loading()) {
+      <div class="typing-wrap">
+        <div class="bubble typing">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </div>
+    }
+
+    @if (!loading() && currentResult()) {
+      @if (currentResult()!.error) {
+        <div class="bubble error">{{ currentResult()!.error }}</div>
+      } @else if (currentResult()!.message) {
+        <div class="bubble muted">{{ currentResult()!.message }}</div>
+      } @else if (currentResult()!.data && currentResult()!.data!.length > 0) {
+
+        @if (isSingleValue(currentResult()!)) {
+          <div class="bubble single-value">{{ getSingleValue(currentResult()!) }}</div>
+
+        } @else if (isSingleRow(currentResult()!)) {
+          <div class="bubble no-pad">
+            <div class="kv-list">
+              @for (col of getColumns(currentResult()!); track col) {
+                <div class="kv-row">
+                  <span class="kv-key">{{ formatColumnName(col) }}</span>
+                  <span class="kv-val">{{ getCellValue(currentResult()!.data![0], col) }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
+        } @else if (isCardView(currentResult()!)) {
+          <div class="card-grid">
+            @for (row of currentResult()!.data!; track $index) {
+              <div class="movie-card">
+                <div class="card-title">{{ getCellValue(row, titleColumn(currentResult()!)) }}</div>
+                @for (col of metaColumns(currentResult()!); track col) {
+                  @if (isOverviewColumn(col)) {
+                    <p class="card-overview">{{ getCellValue(row, col) }}</p>
+                  } @else {
+                    <div class="card-meta">
+                      <span class="meta-key">{{ formatColumnName(col) }}</span>
+                      <span class="meta-val">{{ getCellValue(row, col) }}</span>
+                    </div>
+                  }
+                }
+              </div>
+            }
+          </div>
+
+        } @else {
+          <div class="bubble no-pad">
+            <div class="result-header">
+              {{ 'result.found' | translate:{ count: currentResult()!.data!.length } }}
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    @for (col of getColumns(currentResult()!); track col) {
+                      <th>{{ formatColumnName(col) }}</th>
+                    }
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of currentResult()!.data!; track $index) {
+                    <tr>
+                      @for (col of getColumns(currentResult()!); track col) {
+                        <td [title]="getCellValue(row, col)">{{ getCellValue(row, col) }}</td>
+                      }
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+
+      } @else {
+        <div class="bubble muted">{{ 'result.noResults' | translate }}</div>
+      }
+    }
+
+  </div>
+
+</div>

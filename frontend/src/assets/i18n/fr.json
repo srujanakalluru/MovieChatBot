@@ -1,0 +1,67 @@
+{
+  "app": {
+    "title": "Movie Chatbot"
+  },
+  "header": {
+    "syncTitle": "Synchroniser la base depuis TMDB",
+    "lightMode": "Passer en mode clair",
+    "darkMode": "Passer en mode sombre",
+    "language": "Langue"
+  },
+  "sync": {
+    "title": "Synchroniser la base depuis TMDB",
+    "subtitle": "Récupère toutes les langues, genres et films depuis la dernière synchronisation jusqu'à hier. S'exécute aussi automatiquement chaque jour à 3h30.",
+    "lastSynced": "Dernière synchro",
+    "at": "à",
+    "neverSynced": "Jamais synchronisé",
+    "advanced": "Paramètres avancés",
+    "manualSubtitle": "Synchroniser manuellement une plage de dates précise (contourne la logique automatique).",
+    "startDate": "Date de début",
+    "endDate": "Date de fin",
+    "syncing": "Synchronisation...",
+    "syncRange": "Synchroniser la plage",
+    "doneThrough": "Terminé ! Synchronisé jusqu'au {{date}}.",
+    "failed": "Échec de la synchronisation : {{error}}",
+    "rangeDone": "Terminé ! Plage synchronisée avec succès.",
+    "rangeFailed": "Échec : {{error}}",
+    "setBothDates": "Veuillez définir les deux dates.",
+    "dateTooLate": "Les données ne sont disponibles que jusqu'à hier."
+  },
+  "common": {
+    "cancel": "Annuler",
+    "unknown": "inconnu",
+    "unknownError": "Erreur inconnue"
+  },
+  "search": {
+    "placeholder": "Posez une question sur les films...",
+    "clear": "Effacer",
+    "search": "Rechercher",
+    "translitOn": "Saisie telugu : activée",
+    "translitOff": "Saisie telugu : désactivée"
+  },
+  "result": {
+    "found": "{{count}} résultat(s) trouvé(s)",
+    "noResults": "Aucun résultat trouvé."
+  },
+  "error": {
+    "server": "Erreur serveur ({{status}}). Consultez les journaux du backend.",
+    "noServer": "Impossible de joindre le serveur. Le backend est-il démarré ?"
+  },
+  "suggestions": [
+    "Top 5 des films télougou par popularité",
+    "Genre le plus courant dans les films anglais",
+    "Top 3 des films italiens en 2023",
+    "Comparer les notes télougou et tamoul"
+  ],
+  "auth": {
+    "subtitle": "Connectez-vous avec Google pour continuer",
+    "logout": "Se déconnecter",
+    "loginError": "Échec de la connexion. Veuillez réessayer.",
+    "scriptError": "Impossible de charger Google Sign-In. Vérifiez votre connexion et rechargez.",
+    "adminToggle": "Connexion admin",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "signIn": "Se connecter",
+    "adminError": "Nom d'utilisateur ou mot de passe invalide"
+  }
+}
