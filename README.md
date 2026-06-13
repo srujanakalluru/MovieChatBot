@@ -189,7 +189,6 @@ Open `http://localhost:4201`, sign in with Google, and ask a question. The first
 
 ## Developer Notes
 
-[DEVELOPER.md](DEVELOPER.md) is a guided tour of the codebase with hands-on exercises, intended for developers new to Spring Boot, MySQL, RabbitMQ, JWT, or LLMs.
 
 ### Debugging the backend
 
