@@ -35,7 +35,7 @@ public class MovieIntelServiceImpl implements MovieIntelService {
 
   @Override
   public JsonObjectWrapper searchByCriteria(String sql) {
-    String trimmed = sql.trim().replaceAll(";+$", "");
+    String trimmed = stripTrailingSemicolons(sql.trim());
 
     if (trimmed.contains(";") || !READ_ONLY_SQL.matcher(trimmed).matches()) {
       log.warn("Rejected non-SELECT or multi-statement SQL from model [{}]", trimmed);
@@ -67,5 +67,13 @@ public class MovieIntelServiceImpl implements MovieIntelService {
       }
       return new JsonObjectWrapper(Collections.emptyList());
     }
+  }
+
+  private static String stripTrailingSemicolons(String s) {
+    int end = s.length();
+    while (end > 0 && s.charAt(end - 1) == ';') {
+      end--;
+    }
+    return s.substring(0, end);
   }
 }

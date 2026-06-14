@@ -29,10 +29,12 @@ public class LlmServiceImpl implements LlmService {
     this.llmRestTemplate = llmRestTemplate;
   }
 
+  private static final int MAX_GENERATED_SQL_CHARS = 8192;
+
   private String sanitizeSql(String sql) {
     return sql
         .replaceAll("\\[/SQL\\].*", "")
-        .replaceAll("(?i)\\s+NULLS\\s+(LAST|FIRST)", "")
+        .replaceAll("(?i)\\s++NULLS\\s++(LAST|FIRST)", "")
         .trim();
   }
 
@@ -70,6 +72,13 @@ public class LlmServiceImpl implements LlmService {
     }
 
     String content = body.getChoices().get(0).getMessage().get("content");
-    return content == null ? null : sanitizeSql(content);
+    if (content == null) {
+      return null;
+    }
+    if (content.length() > MAX_GENERATED_SQL_CHARS) {
+      log.warn("LLM response exceeded {} chars ({}) - discarding", MAX_GENERATED_SQL_CHARS, content.length());
+      return null;
+    }
+    return sanitizeSql(content);
   }
 }
